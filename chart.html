@@ -145,6 +145,12 @@
             width: 16px;
         }
 
+        .dropdown-item .item-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
         .dropdown-item .main {
             font-size: 12px;
             font-weight: 600;
@@ -859,6 +865,7 @@
         /* Mobile Responsive */
         @media (max-width: 768px) {
 
+
             .content-area { flex-direction: column;grid-template-columns: 1fr;  }
             .chart-area { min-height: 800px; }
             .tradingview-widget-container {
@@ -995,23 +1002,31 @@
             <div class="dropdown-menu">
                 <div class="dropdown-item active" data-color="#9F3DC9">
                     <span class="item-icon"><i class="fa-solid fa-wave-square"></i></span>
-                    <span class="main" style="color:#9F3DC9">TREND WAVE</span>
-                    <span class="sub">SCANNER</span>
+                    <div class="item-text">
+                        <span class="main" style="color:#9F3DC9">TREND WAVE</span>
+                        <span class="sub">SCANNER</span>
+                    </div>
                 </div>
                 <div class="dropdown-item" data-color="#D7B856">
                     <span class="item-icon"><i class="fa-solid fa-coins"></i></span>
-                    <span class="main" style="color:#D7B856">GOLDEN ERA</span>
-                    <span class="sub">SCANNER</span>
+                    <div class="item-text">
+                        <span class="main" style="color:#D7B856">GOLDEN ERA</span>
+                        <span class="sub">SCANNER</span>
+                    </div>
                 </div>
                 <div class="dropdown-item" data-color="#00FF88">
                     <span class="item-icon"><i class="fa-solid fa-leaf"></i></span>
-                    <span class="main" style="color:#00FF88">SMARTMONICS</span>
-                    <span class="sub">SCANNER</span>
+                    <div class="item-text">
+                        <span class="main" style="color:#00FF88">SMARTMONICS</span>
+                        <span class="sub">SCANNER</span>
+                    </div>
                 </div>
                 <div class="dropdown-item" data-color="#FFD700">
                     <span class="item-icon"><i class="fa-solid fa-star"></i></span>
-                    <span class="main" style="color:#FFD700">SUPERNOVA</span>
-                    <span class="sub">SCANNER</span>
+                    <div class="item-text">
+                        <span class="main" style="color:#FFD700">SUPERNOVA</span>
+                        <span class="sub">SCANNER</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1138,23 +1153,31 @@
                         <div class="dropdown-menu">
                             <div class="dropdown-item active" data-color="#9F3DC9">
                                 <span class="item-icon"><i class="fa-solid fa-wave-square"></i></span>
-                                <span class="main" style="color:#9F3DC9">TREND WAVE</span>
-                                <span class="sub">SCANNER</span>
+                                <div class="item-text">
+                                    <span class="main" style="color:#9F3DC9">TREND WAVE</span>
+                                    <span class="sub">SCANNER</span>
+                                </div>
                             </div>
                             <div class="dropdown-item" data-color="#D7B856">
                                 <span class="item-icon"><i class="fa-solid fa-coins"></i></span>
-                                <span class="main" style="color:#D7B856">GOLDEN ERA</span>
-                                <span class="sub">SCANNER</span>
+                                <div class="item-text">
+                                    <span class="main" style="color:#D7B856">GOLDEN ERA</span>
+                                    <span class="sub">SCANNER</span>
+                                </div>
                             </div>
                             <div class="dropdown-item" data-color="#00FF88">
                                 <span class="item-icon"><i class="fa-solid fa-leaf"></i></span>
-                                <span class="main" style="color:#00FF88">SMARTMONICS</span>
-                                <span class="sub">SCANNER</span>
+                                <div class="item-text">
+                                    <span class="main" style="color:#00FF88">SMARTMONICS</span>
+                                    <span class="sub">SCANNER</span>
+                                </div>
                             </div>
                             <div class="dropdown-item" data-color="#FFD700">
                                 <span class="item-icon"><i class="fa-solid fa-star"></i></span>
-                                <span class="main" style="color:#FFD700">SUPERNOVA</span>
-                                <span class="sub">SCANNER</span>
+                                <div class="item-text">
+                                    <span class="main" style="color:#FFD700">SUPERNOVA</span>
+                                    <span class="sub">SCANNER</span>
+                                </div>
                             </div>
                         </div>
                     </div>
