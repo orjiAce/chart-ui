@@ -24,13 +24,9 @@
             overflow-x: hidden;
         }
         .tradingview-widget-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
             width: 100%;
             height: 100%;
+            position: relative;
         }
         #tradingview_chart {
             width: 100%;
@@ -147,6 +143,12 @@
         .dropdown-item .item-icon {
             display: flex;
             width: 16px;
+        }
+
+        .dropdown-item .item-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
         }
 
         .dropdown-item .main {
@@ -321,7 +323,8 @@
 
         /* Content Area */
         .content-area {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 380px;
             flex: 1;
             margin-top: 20px;
             background: rgb(43 37 37);
@@ -331,13 +334,19 @@
             flex: 1;
             background: rgb(43 37 37);
             display: flex;
-            align-items: center;
+            align-items: stretch;
             justify-content: center;
             position: relative;
+            min-width: 0;
             min-height: 500px;
         }
 
         .chart-placeholder {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
             text-align: center;
             color: #666;
         }
@@ -844,9 +853,9 @@
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
-            .content-area { flex-direction: column; }
-            .chart-area { display: none; }
-            .sidebar { width: 100%; height: calc(100vh - 95px); }
+            .content-area { grid-template-columns: 1fr; }
+            .chart-area { min-height: 300px; }
+            .sidebar { width: 100%; height: auto; }
             .nav-buttons { flex-wrap: wrap; }
             .timeframe-buttons { flex-wrap: wrap; }
             .secondary-toolbar { flex-wrap: wrap; gap: 8px; }
@@ -878,10 +887,57 @@
         .alerts-list::-webkit-scrollbar-track { background: #1a1a1a; }
         .alerts-list::-webkit-scrollbar-thumb { background: #333333; border-radius: 3px; }
         .alerts-list::-webkit-scrollbar-thumb:hover { background: #444444; }
+
+        .hamburger {
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            right: auto;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 24px;
+            z-index: 1001;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger { display: block; }
+            .top-nav { display: none; }
+            body.mobile-menu-open .top-nav {
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background-color: #1a1a1a;
+                padding: 60px 12px;
+                overflow-y: auto;
+                z-index: 1000;
+                align-items: flex-start;
+            }
+            body.mobile-menu-open .top-nav .nav-buttons {
+                flex-direction: column;
+                width: 100%;
+                margin-left: 0;
+            }
+            body.mobile-menu-open .top-nav .nav-btn,
+            body.mobile-menu-open .top-nav .nav-head-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            body.mobile-menu-open .top-nav .logo,
+            body.mobile-menu-open .top-nav .trend-dropdown {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="main-container">
+    <button class="hamburger" id="hamburger"><i class="fa-solid fa-bars"></i></button>
     <!-- Top Navigation Bar -->
     <div class="top-nav">
         <div class="logo">
@@ -897,23 +953,31 @@
             <div class="dropdown-menu">
                 <div class="dropdown-item active" data-color="#9F3DC9">
                     <span class="item-icon"><i class="fa-solid fa-wave-square"></i></span>
-                    <span class="main" style="color:#9F3DC9">TREND WAVE</span>
-                    <span class="sub">SCANNER</span>
+                    <div class="item-text">
+                        <span class="main" style="color:#9F3DC9">TREND WAVE</span>
+                        <span class="sub">SCANNER</span>
+                    </div>
                 </div>
                 <div class="dropdown-item" data-color="#D7B856">
                     <span class="item-icon"><i class="fa-solid fa-coins"></i></span>
-                    <span class="main" style="color:#D7B856">GOLDEN ERA</span>
-                    <span class="sub">SCANNER</span>
+                    <div class="item-text">
+                        <span class="main" style="color:#D7B856">GOLDEN ERA</span>
+                        <span class="sub">SCANNER</span>
+                    </div>
                 </div>
                 <div class="dropdown-item" data-color="#00FF88">
                     <span class="item-icon"><i class="fa-solid fa-leaf"></i></span>
-                    <span class="main" style="color:#00FF88">SMARTMONICS</span>
-                    <span class="sub">SCANNER</span>
+                    <div class="item-text">
+                        <span class="main" style="color:#00FF88">SMARTMONICS</span>
+                        <span class="sub">SCANNER</span>
+                    </div>
                 </div>
                 <div class="dropdown-item" data-color="#FFD700">
                     <span class="item-icon"><i class="fa-solid fa-star"></i></span>
-                    <span class="main" style="color:#FFD700">SUPERNOVA</span>
-                    <span class="sub">SCANNER</span>
+                    <div class="item-text">
+                        <span class="main" style="color:#FFD700">SUPERNOVA</span>
+                        <span class="sub">SCANNER</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1041,23 +1105,31 @@
                         <div class="dropdown-menu">
                             <div class="dropdown-item active" data-color="#9F3DC9">
                                 <span class="item-icon"><i class="fa-solid fa-wave-square"></i></span>
-                                <span class="main" style="color:#9F3DC9">TREND WAVE</span>
-                                <span class="sub">SCANNER</span>
+                                <div class="item-text">
+                                    <span class="main" style="color:#9F3DC9">TREND WAVE</span>
+                                    <span class="sub">SCANNER</span>
+                                </div>
                             </div>
                             <div class="dropdown-item" data-color="#D7B856">
                                 <span class="item-icon"><i class="fa-solid fa-coins"></i></span>
-                                <span class="main" style="color:#D7B856">GOLDEN ERA</span>
-                                <span class="sub">SCANNER</span>
+                                <div class="item-text">
+                                    <span class="main" style="color:#D7B856">GOLDEN ERA</span>
+                                    <span class="sub">SCANNER</span>
+                                </div>
                             </div>
                             <div class="dropdown-item" data-color="#00FF88">
                                 <span class="item-icon"><i class="fa-solid fa-leaf"></i></span>
-                                <span class="main" style="color:#00FF88">SMARTMONICS</span>
-                                <span class="sub">SCANNER</span>
+                                <div class="item-text">
+                                    <span class="main" style="color:#00FF88">SMARTMONICS</span>
+                                    <span class="sub">SCANNER</span>
+                                </div>
                             </div>
                             <div class="dropdown-item" data-color="#FFD700">
                                 <span class="item-icon"><i class="fa-solid fa-star"></i></span>
-                                <span class="main" style="color:#FFD700">SUPERNOVA</span>
-                                <span class="sub">SCANNER</span>
+                                <div class="item-text">
+                                    <span class="main" style="color:#FFD700">SUPERNOVA</span>
+                                    <span class="sub">SCANNER</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1508,4 +1580,31 @@
     window.addEventListener("load", initChart);
     window.addEventListener("resize", initChart);
 </script>
+<script>
+    const hamburger = document.getElementById('hamburger');
+    if (hamburger) {
+        hamburger.addEventListener('click', () => {
+            const open = document.body.classList.toggle('mobile-menu-open');
+            const icon = hamburger.querySelector('i');
+            if (icon) {
+                icon.classList.toggle('fa-bars', !open);
+                icon.classList.toggle('fa-times', open);
+            }
+        });
+
+        document.querySelectorAll('.top-nav button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (document.body.classList.contains('mobile-menu-open')) {
+                    document.body.classList.remove('mobile-menu-open');
+                    const icon = hamburger.querySelector('i');
+                    if (icon) {
+                        icon.classList.add('fa-bars');
+                        icon.classList.remove('fa-times');
+                    }
+                }
+            });
+        });
+    }
+</script>
 </body>
+</html>
