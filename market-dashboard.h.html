@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Data Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: rgb(43 37 37);
+            color: #ffffff;
+            font-family: "Inter", sans-serif;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            font-family: "Inter", sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            background-color: #1a1a1a;
+            border-bottom: 1px solid #333;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            min-height: 50px;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 18px;
+            color: #ffffff;
+            margin-right: 8px;
+        }
+
+        .trend-dropdown {
+            align-items: center;
+            background-color: #2a2a2a;
+            color: #8b5cf6;
+            border: 1px solid #333;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 140px;
+        }
+
+        .trend-dropdown:hover {
+            background-color: #333;
+        }
+
+        .dropdown-arrow {
+            font-size: 10px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .nav-btn {
+            background: linear-gradient(225deg, #F2F2F2 -0.32%, #E6E6E6 99.68%);
+            box-shadow: 0px 0px 15px 0px rgba(215, 184, 86, 0.65);
+            border: 1px solid rgba(255, 255, 255, 1);
+            gap: 10px;
+            opacity: 1;
+            font-family: "Inter", sans-serif;
+            font-weight: 500;
+            color: rgba(0, 0, 0, 1);
+            padding: 10px 50px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        .nav-head-btn {
+            background: linear-gradient(90deg, #333333 0%, #262626 100%);
+            border: 1px solid rgba(51, 51, 51, 1);
+            color: rgba(255, 255, 255, 1);
+            gap: 10px;
+            opacity: 1;
+            font-family: "Inter", sans-serif;
+            font-weight: 500;
+            padding: 10px 50px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-btn.assets-active {
+            box-shadow: none;
+            background: linear-gradient(90deg, #9F3DC9 0%, #4E1E63 100%);
+            color: rgba(255, 255, 255, 1);
+            border: 1px solid rgba(159, 61, 201, 1);
+        }
+
+        .nav-btn.alerts-active {
+            box-shadow: none;
+            background: linear-gradient(90deg, #D7B856 0%, #99833D 100%);
+            color: rgba(0, 0, 0, 1);
+            border: 1px solid #D7B856;
+        }
+
+        /* Secondary Toolbar */
+        .secondary-toolbar {
+            background-color: #1a1a1a;
+            border-bottom: 1px solid #333;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            min-height: 45px;
+        }
+
+        .symbol-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .symbol-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .info-icon {
+            width: 16px;
+            height: 16px;
+            border: 1px solid #666;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #666;
+        }
+
+        .timeframe-buttons {
+            display: flex;
+            gap: 4px;
+            margin-left: 12px;
+        }
+
+        .timeframe-btn {
+            background-color: #2a2a2a;
+            color: #888;
+            border: 1px solid #333;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .timeframe-btn:hover {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .timeframe-btn.active {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .chart-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 12px;
+        }
+
+        .control-icon {
+            width: 28px;
+            height: 28px;
+            background-color: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .control-icon:hover {
+            background-color: #333;
+        }
+
+        .indicators-btn {
+            background-color: #2a2a2a;
+            color: white;
+            border: 1px solid #333;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: auto;
+        }
+
+        .indicators-btn:hover {
+            background-color: #333;
+        }
+
+        /* Content Area */
+        .content-area {
+            display: flex;
+            flex: 1;
+            margin-top: 20px;
+            background: rgb(43 37 37);
+        }
+
+        .chart-area {
+            flex: 1;
+            background: rgb(43 37 37);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 500px;
+        }
+
+        .chart-placeholder {
+            text-align: center;
+            color: #666;
+        }
+
+        /* Sidebar Base */
+        .sidebar {
+            width: 380px;
+            background: linear-gradient(90deg, #1A1A1A 0%, #0D0D0D 100%);
+            border-radius: 10px;
+            border-left: 1px solid #333;
+            display: none;
+            flex-direction: column;
+            height: calc(100vh - 95px);
+            overflow: hidden;
+        }
+
+        .sidebar.active {
+            display: flex;
+        }
+
+        /* Category Buttons */
+        .category-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 16px;
+            background: linear-gradient(90deg, #1A1A1A 0%, #0D0D0D 100%);
+        }
+
+        .category-btn {
+            background: linear-gradient(90deg, #000000 0%, #0D0D0D 100%);
+            border: 1px solid transparent;
+            color: #ffffff;
+            padding: 12px 16px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .category-btn:hover {
+            background-color: #333333;
+        }
+
+        .category-btn.active {
+            color: rgba(159, 61, 201, 1);
+            border-radius: 5px;
+            border: 1px solid transparent;
+            border-image: linear-gradient(180deg, #000000 0%, #9F3DC9 100%) 1;
+            border-image-source: linear-gradient(180deg, #000000 0%, #9F3DC9 100%);
+            background: linear-gradient(90deg, #000000 0%, #0D0D0D 100%) border-box;
+        }
+
+        .tabs {
+            align-items: center;
+            justify-content: center;
+            justify-items: center;
+            align-content: center;
+            background: linear-gradient(90deg, #333333 0%, #1A1A1A 100%);
+            border: 1px solid rgba(51, 51, 51, 1);
+            display: flex;
+            gap: 8px;
+            border-radius: 5px;
+            width: 90%;
+            align-self: center;
+            padding: 6px;
+            margin-bottom: 10px;
+        }
+
+        .tab {
+            border-radius: 5px;
+            flex: 1;
+            align-self: center;
+            background-color: transparent;
+            color: #ffffff;
+            border: none;
+            padding: 14px 26px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab:hover {
+            background-color: #333333;
+        }
+
+        .tab.active {
+            background: linear-gradient(90deg, #9F3DC9 0%, #4E1E63 100%);
+            color: white;
+        }
+
+        .search-container {
+            flex-direction: row;
+            justify-items: center;
+            justify-content: space-between;
+            padding: 6px;
+            width: 100%;
+            position: relative;
+        }
+
+        .search-input-container {
+            flex-direction: row;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 95%;
+            background: linear-gradient(90deg, #1A1A1A 0%, #0D0D0D 100%);
+            color: #ffffff;
+            border-radius: 100px;
+            font-size: 14px;
+        }
+
+        .search-input {
+            border: 1px solid rgba(51, 51, 51, 51);
+            width: 90%;
+            background: linear-gradient(90deg, #1A1A1A 0%, #0D0D0D 100%);
+            color: #ffffff;
+            padding: 12px 16px 12px 45px;
+            border-top-left-radius: 100px;
+            border-bottom-left-radius: 100px;
+            font-size: 14px;
+        }
+
+        .search-input::placeholder {
+            color: #fff;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #9F3DC9;
+        }
+
+        .search-icon {
+            background: rgba(51, 51, 51, 1);
+            align-items: center;
+            align-content: center;
+            justify-items: center;
+            justify-content: center;
+            width: 43px;
+            height: 42px;
+            opacity: 1;
+            padding-right: 14px;
+            padding-left: 14px;
+            border-width: 1px;
+            border-top-right-radius: 100px;
+            border-bottom-right-radius: 100px;
+            color: #666666;
+            pointer-events: none;
+        }
+
+        .assets-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 16px 16px 16px;
+        }
+
+        .alerts-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .asset-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 0.5px solid rgba(81, 81, 81, 1);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .asset-item:hover:not(.favorited) {
+            background-color: #333333;
+            border-color: #444444;
+        }
+
+        .asset-item.favorited {
+            background: linear-gradient(90deg, #9F3DC9 0%, #4E1E63 100%);
+            border-bottom: 1px solid rgba(159, 61, 201, 1);
+            border-radius: 16px;
+            min-height: 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .asset-item.favorited::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: linear-gradient(360deg, #2D113A 0%, #090909 100%);
+            z-index: 1;
+        }
+
+        .asset-item.favorited .asset-content {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            padding-bottom: 20px;
+        }
+
+        .asset-item.favorited .mini-chart {
+            position: absolute;
+            bottom: 8px;
+            left: 12px;
+            right: 12px;
+            height: 35px;
+            z-index: 2;
+        }
+
+        .asset-item.favorited .mini-chart svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .asset-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .asset-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            color: white;
+        }
+
+        .btc { background-color: #f7931a; }
+        .eth { background-color: #627eea; }
+        .xrp { background-color: #23292f; }
+        .usdt { background-color: #26a17b; }
+        .bnb { background-color: #f3ba2f; }
+        .sol { background-color: #9945ff; }
+        .doge { background-color: #c2a633; }
+        .usdc { background-color: #2775ca; }
+        .ada { background-color: #0033ad; }
+
+        .asset-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .asset-name {
+            font-family: "Inter", sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .asset-symbol {
+            font-weight: 500;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 1);
+        }
+
+        .asset-price {
+            font-size: 14px;
+            font-weight: 500;
+            margin-right: 12px;
+        }
+
+        .asset-change {
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 12px;
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .positive { color: rgba(150, 214, 64, 1); }
+        .negative { color: rgba(247, 107, 79, 1); }
+
+        .favorite-btn {
+            width: 26px;
+            height: 26px;
+            opacity: 1;
+            align-items: center;
+            justify-items: center;
+            border: none;
+            cursor: pointer;
+            border-radius: 100px;
+            transition: background-color 0.2s;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+            linear-gradient(135.86deg, rgba(177, 177, 177, 0.32) 5.24%, rgba(54, 53, 103, 0.2) 51.01%);
+        }
+
+        .favorite-btn:hover { background-color: rgba(255, 255, 255, 0.1); }
+
+        .favorite-btn.favorited { background: rgba(255, 215, 0, 0.2); }
+
+        .star-icon {
+            width: 20px;
+            height: 20px;
+            fill: #666666;
+            transition: fill 0.2s;
+        }
+
+        .star-icon.favorited { color: #fbbf24 !important; }
+
+        .no-assets {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666666;
+        }
+
+        /* Alert sidebar elements */
+        .alert-top-buttons {
+            display: flex;
+            gap: 8px;
+            padding: 16px;
+        }
+
+        .alert-top-btn {
+            flex: 1;
+            background: linear-gradient(90deg, #333333 0%, #1A1A1A 100%);
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .alert-top-btn.active {
+            background: linear-gradient(90deg, #9F3DC9 0%, #4E1E63 100%);
+            border-color: #9F3DC9;
+        }
+
+        .scanner-controls {
+            padding: 0 16px 16px 16px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .scanner-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .scanner-label {
+            background: #1E40AF;
+            color: #fff;
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .scanner-dropdown {
+            flex: 1;
+            background: linear-gradient(90deg, #000000 0%, #0D0D0D 100%);
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 6px 10px;
+            font-size: 12px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: space-between;
+        }
+
+        .scanner-timeframes {
+            display: flex;
+            gap: 4px;
+        }
+
+        .scanner-timeframes .timeframe-btn {
+            flex: 1;
+            padding: 4px 0;
+        }
+
+        .alert-card {
+
+
+
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 16px;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+
+        .alert-card.active {  border-bottom: 1px solid rgba(62, 112, 235, 1); background: linear-gradient(180deg, #0D0D0D 0%, #001326 100%); }
+        .alert-card.pending {
+
+            border-bottom: 1px solid rgba(216, 0, 39, 1);
+            background: linear-gradient(180deg, #0D0D0D 0%, #260001 100%); }
+
+        .alert-header {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            font-size: 12px;
+            margin-bottom: 10px;
+
+        }
+
+        .alert-status.active { color: rgba(0, 127, 255, 1); }
+        .alert-status.pending { color: rgba(255, 150, 2, 1); }
+
+        .alert-time { color: #9CA3AF; }
+
+        .alert-main {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .alert-pair {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .alert-meta {
+            text-align: right;
+            font-size: 12px;
+        }
+
+        .alert-meta div { line-height: 1.2; }
+
+        .alert-table {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        .alert-card.active .alert-table { border: 1px solid rgba(37, 37, 37, 1) }
+        .alert-card.pending .alert-table { border: 1px solid rgba(37, 37, 37, 1) }
+
+        .alert-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            margin: 4px 0;
+        }
+
+        .alert-row .label { font-weight: 700; }
+        .alert-row.poi .label { color: rgba(216, 0, 39, 1); }
+        .alert-row.invalidation .label { color: #F87171; }
+        .alert-row.exit1 .label,
+        .alert-row.exit2 .label { color: #86EFAC; }
+
+        .alert-row .value { display: flex; align-items: center; }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            color: #9CA3AF;
+            cursor: pointer;
+            margin-left: 6px;
+        }
+
+        .alert-card .mini-chart {
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .content-area { flex-direction: column; }
+            .chart-area { display: none; }
+            .sidebar { width: 100%; height: calc(100vh - 95px); }
+            .nav-buttons { flex-wrap: wrap; }
+            .timeframe-buttons { flex-wrap: wrap; }
+            .secondary-toolbar { flex-wrap: wrap; gap: 8px; }
+            .category-buttons { grid-template-columns: 1fr 1fr; gap: 6px; padding: 12px; }
+            .category-btn { padding: 10px 12px; font-size: 13px; }
+            .tabs { padding: 0 12px 12px 12px; }
+            .search-container { padding: 0 12px 12px 12px; }
+            .assets-list { padding: 0 12px 12px 12px; }
+            .alerts-list { padding: 12px; }
+        }
+
+        @media (max-width: 480px) {
+            .top-nav { padding: 8px 12px; gap: 8px; }
+            .secondary-toolbar { padding: 8px 12px; gap: 6px; }
+            .timeframe-btn { padding: 3px 6px; font-size: 10px; }
+            .asset-item { padding: 10px; }
+            .asset-icon { width: 28px; height: 28px; margin-right: 10px; }
+            .asset-name { font-size: 13px; }
+            .asset-symbol { font-size: 11px; }
+            .asset-price { font-size: 13px; }
+            .asset-change { font-size: 11px; min-width: 50px; }
+        }
+
+        .assets-list::-webkit-scrollbar { width: 6px; }
+        .assets-list::-webkit-scrollbar-track { background: #1a1a1a; }
+        .assets-list::-webkit-scrollbar-thumb { background: #333333; border-radius: 3px; }
+        .assets-list::-webkit-scrollbar-thumb:hover { background: #444444; }
+        .alerts-list::-webkit-scrollbar { width: 6px; }
+        .alerts-list::-webkit-scrollbar-track { background: #1a1a1a; }
+        .alerts-list::-webkit-scrollbar-thumb { background: #333333; border-radius: 3px; }
+        .alerts-list::-webkit-scrollbar-thumb:hover { background: #444444; }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <!-- Top Navigation Bar -->
+    <div class="top-nav">
+        <div class="logo">JIFU</div>
+
+        <div class="trend-dropdown" id="trendDropdown">
+            <span><!-- SVG removed for brevity -->TREND WAVE SCANNER</span>
+            <span class="dropdown-arrow"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <button class="nav-head-btn" id="saveChart">Save Chart</button>
+        <button class="nav-head-btn" id="loadChart">Load Chart</button>
+        <div class="nav-buttons">
+            <button class="nav-btn assets-active" id="assetsBtn">Assets</button>
+            <button class="nav-btn" id="alertNotifications"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M8 0C4.68629 0 2 2.68629 2 6V9L0.585787 10.4142C0.210714 10.7893 0 11.298 0 11.8284L0 13C0 14.1046 0.895431 15 2 15H4.12701C4.30416 15.686 4.66203 16.3189 5.17157 16.8284C5.92172 17.5786 6.93913 18 8 18C9.06087 18 10.0783 17.5786 10.8284 16.8284C11.338 16.3189 11.6958 15.686 11.873 15H14C15.1046 15 16 14.1046 16 13V11.8284C16 11.298 15.7893 10.7893 15.4142 10.4142L14 9V6C14 2.68629 11.3137 0 8 0ZM10.2913 15H5.70871C5.83253 15.2837 6.00912 15.5447 6.23223 15.7678C6.70107 16.2366 7.33696 16.5 8 16.5C8.66304 16.5 9.29893 16.2366 9.76777 15.7678C9.99088 15.5447 10.1675 15.2837 10.2913 15Z" fill="black"/>
+                <circle cx="14" cy="2" r="2" fill="#FF0000"/>
+            </svg> Alert Notifications</button>
+        </div>
+    </div>
+
+    <div class="secondary-toolbar" style="display: none;">
+        <button class="indicators-btn"></button>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content-area">
+        <div class="chart-area">
+            <div class="chart-placeholder">
+                <h2>Trading Chart Area</h2>
+                <p>Chart visualization would appear here</p>
+            </div>
+        </div>
+
+        <!-- Assets Sidebar -->
+        <div class="sidebar active" id="assetsSidebar">
+            <div class="category-buttons">
+                <button class="category-btn" data-category="forex"><i class="fa-solid fa-dollar-sign"></i> Forex</button>
+                <button class="category-btn" data-category="commodities">  <svg class="active" width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path class="active" d="M1.5 13.75C1.2875 13.75 1.10938 13.6781 0.965625 13.5344C0.821875 13.3906 0.75 13.2125 0.75 13C0.75 12.7875 0.821875 12.6094 0.965625 12.4656C1.10938 12.3219 1.2875 12.25 1.5 12.25H2.25V7.75H1.5C1.2875 7.75 1.10938 7.67813 0.965625 7.53438C0.821875 7.39063 0.75 7.2125 0.75 7C0.75 6.7875 0.821875 6.60938 0.965625 6.46563C1.10938 6.32188 1.2875 6.25 1.5 6.25H2.25V1.75H1.5C1.2875 1.75 1.10938 1.67813 0.965625 1.53438C0.821875 1.39062 0.75 1.2125 0.75 1C0.75 0.7875 0.821875 0.609375 0.965625 0.465625C1.10938 0.321875 1.2875 0.25 1.5 0.25H13.5C13.7125 0.25 13.8906 0.321875 14.0344 0.465625C14.1781 0.609375 14.25 0.7875 14.25 1C14.25 1.2125 14.1781 1.39062 14.0344 1.53438C13.8906 1.67813 13.7125 1.75 13.5 1.75H12.75V6.25H13.5C13.7125 6.25 13.8906 6.32188 14.0344 6.46563C14.1781 6.60938 14.25 6.7875 14.25 7C14.25 7.2125 14.1781 7.39063 14.0344 7.53438C13.8906 7.67813 13.7125 7.75 13.5 7.75H12.75V12.25H13.5C13.7125 12.25 13.8906 12.3219 14.0344 12.4656C14.1781 12.6094 14.25 12.7875 14.25 13C14.25 13.2125 14.1781 13.3906 14.0344 13.5344C13.8906 13.6781 13.7125 13.75 13.5 13.75H1.5ZM3.75 12.25H11.25V7.75C11.0375 7.75 10.8594 7.67813 10.7156 7.53438C10.5719 7.39063 10.5 7.2125 10.5 7C10.5 6.7875 10.5719 6.60938 10.7156 6.46563C10.8594 6.32188 11.0375 6.25 11.25 6.25V1.75H3.75V6.25C3.9625 6.25 4.14063 6.32188 4.28438 6.46563C4.42813 6.60938 4.5 6.7875 4.5 7C4.5 7.2125 4.42813 7.39063 4.28438 7.53438C4.14063 7.67813 3.9625 7.75 3.75 7.75V12.25ZM7.5 10C8.125 10 8.65625 9.78438 9.09375 9.35313C9.53125 8.92188 9.75 8.4 9.75 7.7875C9.75 7.3 9.60938 6.88125 9.32812 6.53125C9.04688 6.18125 8.4375 5.4625 7.5 4.375C6.5625 5.45 5.95312 6.16563 5.67188 6.52188C5.39062 6.87813 5.25 7.3 5.25 7.7875C5.25 8.4 5.46875 8.92188 5.90625 9.35313C6.34375 9.78438 6.875 10 7.5 10Z" fill="white"/>
+                </svg> Commodities</button>
+                <button class="category-btn active" data-category="crypto"><i class="fa-brands fa-btc"></i> Crypto</button>
+                <button class="category-btn" data-category="indices">  <svg width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0.75 13.75V12.25L2.25 10.75V13.75H0.75ZM3.75 13.75V9.25L5.25 7.75V13.75H3.75ZM6.75 13.75V7.75L8.25 9.26875V13.75H6.75ZM9.75 13.75V9.26875L11.25 7.76875V13.75H9.75ZM12.75 13.75V6.25L14.25 4.75V13.75H12.75ZM0.75 9.86875V7.75L6 2.5L9 5.5L14.25 0.25V2.36875L9 7.61875L6 4.61875L0.75 9.86875Z" fill="white"/>
+                </svg> Indices</button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="all">
+
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.32221 9.22074C3.49601 9.26273 4.74664 9.13676 5.91171 9.21147C6.96344 9.27881 7.7318 10.0592 7.80401 11.1078C7.74488 12.2473 7.88411 13.4674 7.80401 14.5973C7.73534 15.5647 7.05962 16.3192 6.1008 16.4648C4.85699 16.3887 3.48919 16.5681 2.25981 16.4648C1.28601 16.383 0.594214 15.508 0.529639 14.5698C0.447081 13.3712 0.56397 12.0466 0.563426 10.8414C0.725544 9.96701 1.43315 9.30581 2.32221 9.22046V9.22074Z" fill="white"/>
+                        <path d="M2.32209 0.542311C3.5482 0.428066 4.96476 0.582937 6.20286 0.568759C7.1189 0.749532 7.74013 1.50316 7.80389 2.42939C7.74476 3.56883 7.88399 4.78899 7.80389 5.91889C7.73713 6.85984 7.01509 7.7119 6.04783 7.78797C4.8239 7.88395 3.47273 7.71681 2.23572 7.78361C1.23739 7.62301 0.594095 6.86638 0.52952 5.86436C0.452684 4.66983 0.559764 3.36298 0.563306 2.16327C0.724608 1.28858 1.43139 0.625472 2.32209 0.542311Z" fill="white"/>
+                        <path d="M11.0157 9.22095C12.2421 9.11516 13.6333 9.2553 14.8692 9.2474C15.7373 9.40881 16.3923 10.1455 16.47 11.0265C16.4043 12.2063 16.5594 13.4837 16.47 14.6521C16.3989 15.5816 15.6894 16.3393 14.7671 16.4652C13.5279 16.3848 12.1492 16.5743 10.9261 16.4652C10.0708 16.3889 9.28881 15.5916 9.22178 14.7352C9.12697 13.5252 9.29562 12.1935 9.22178 10.9706C9.32396 10.0275 10.0743 9.3022 11.0154 9.22095H11.0157Z" fill="white"/>
+                        <path d="M10.9899 0.538512C12.1699 0.42863 13.4895 0.600951 14.6837 0.533877C15.6387 0.629308 16.3867 1.38676 16.4714 2.34407C16.4057 3.52386 16.5608 4.80128 16.4714 5.96962C16.4005 6.89558 15.687 7.65548 14.7685 7.78281C13.5293 7.70238 12.1506 7.89187 10.9275 7.78281C10.0885 7.70783 9.29947 6.91902 9.22454 6.07869C9.11692 4.87135 9.30492 3.51159 9.22318 2.28817C9.31527 1.36522 10.0662 0.624673 10.9899 0.538785V0.538512Z" fill="white"/>
+                    </svg>
+                    ALL</button>
+                <button class="tab" data-tab="favorites"><i class="fa-solid fa-star"></i> FAVORITES</button>
+            </div>
+
+            <div class="search-container">
+                <div class="search-input-container">
+                    <input type="text" class="search-input" placeholder="Search" id="searchInput">
+                    <div class="search-icon"><i class="fa-solid fa-magnifying-glass" style="color:#ffffff;"></i></div>
+                </div>
+            </div>
+
+            <div class="assets-list" id="assetsList"></div>
+        </div>
+
+        <!-- Alerts Sidebar -->
+        <div class="sidebar" id="alertsSidebar">
+            <div class="alert-top-buttons">
+                <button class="alert-top-btn active" data-tab="educator"><svg width="21" height="31" viewBox="0 0 21 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.70594 0.888378C13.7876 0.624969 17.5527 2.45147 19.6109 6.06972C21.4998 9.39032 21.5164 13.7274 19.327 16.9062C18.0423 18.7713 16.2808 19.7173 15.7955 22.1396C15.6012 23.1088 15.6941 23.9584 15.5865 24.8697C15.5728 24.9865 15.5382 25.1905 15.4169 25.2277L5.54417 25.1659L5.49773 25.0685C5.44892 23.6902 5.43613 22.2043 4.87503 20.9263C4.32436 19.672 3.22729 18.8021 2.37144 17.7823C-3.0779 11.2901 1.49188 1.41809 9.70594 0.888378ZM6.87914 23.7828L14.1734 23.7688C14.3269 22.9458 14.3402 22.1382 14.5629 21.319C15.124 19.2518 16.2822 18.4051 17.5594 16.8917C21.8761 11.7755 19.0009 3.93736 12.6631 2.52962C6.2081 1.09583 0.408082 6.28633 1.58714 13.0327C2.27192 16.9501 5.63658 17.9627 6.53699 21.5018C6.72797 22.2525 6.74835 23.0225 6.87914 23.7833V23.7828Z" fill="white"/>
+                    <path d="M6.51694 27.6491C6.36055 27.6009 6.36813 26.6341 6.39941 26.4681C6.43069 26.3022 6.61077 26.2433 6.75151 26.2477L14.3808 26.253C14.4514 26.2645 14.5594 26.3089 14.6002 26.3673C14.6604 26.4537 14.6694 27.2907 14.6428 27.4311C14.631 27.4943 14.5092 27.6491 14.4779 27.6491H6.51646H6.51694Z" fill="white"/>
+                    <path d="M7.6636 28.72L13.2963 28.7084C13.6901 28.7614 13.5134 29.2704 13.4214 29.516C13.2442 29.9883 12.7869 30.4799 12.322 30.6642C11.7282 30.8991 9.62932 30.9184 9.00378 30.7631C8.44742 30.6246 7.89723 30.146 7.66976 29.6125C7.58303 29.4084 7.34893 28.8169 7.6636 28.7209V28.72Z" fill="white"/>
+                    <path d="M8.82068 7.69488H10.1026V6.91623C10.1026 6.86847 10.2618 6.69865 10.3201 6.67453C10.5423 6.58239 10.9295 6.69431 10.9295 6.9582V7.69488H12.2114V6.91623C12.2114 6.68515 12.7313 6.51581 12.9327 6.77102C12.9535 6.79755 13.0384 6.98474 13.0384 7.00018V7.69488C13.8914 7.55642 14.415 8.21398 14.3203 9.04232C14.6752 9.05679 15.4221 8.8947 15.3533 9.48037C15.3382 9.61015 15.1662 9.8422 15.0444 9.8422H14.3207V11.0628H15.0444C15.2922 11.0628 15.4249 11.4395 15.3079 11.6677C15.2823 11.7174 15.1249 11.8626 15.0856 11.8626H14.3207V13.1256H15.0856C15.1557 13.1256 15.3287 13.3239 15.3467 13.4088C15.4846 14.0567 14.6652 13.9231 14.279 13.925C14.3942 14.7302 13.8146 15.2778 13.0384 15.1881C13.0682 15.6054 13.0938 16.384 12.4474 16.1896C12.391 16.1727 12.2114 15.9672 12.2114 15.9247V15.1881H10.9295V15.8828C10.9295 15.8972 10.8134 16.0907 10.7859 16.1153C10.5812 16.2996 10.1026 16.1486 10.1026 15.9247V15.1881H8.82068V15.9247C8.82068 15.9971 8.62733 16.1698 8.54345 16.1891C7.90511 16.3377 7.98046 15.6116 7.9942 15.1876C7.22744 15.2884 6.58768 14.7312 6.71231 13.925H5.94744C5.80528 13.925 5.64368 13.6645 5.63894 13.5208C5.63467 13.4021 5.79675 13.1252 5.90622 13.1252H6.71279V11.8621H5.90622C5.78869 11.8621 5.64368 11.5785 5.6432 11.4622C5.6432 11.3358 5.84224 11.0623 5.94744 11.0623H6.71231V9.84171H5.94744C5.84224 9.84171 5.64273 9.56817 5.6432 9.44178C5.6432 9.32551 5.78821 9.04184 5.90622 9.04184H6.71279V8.43156C6.71279 8.37463 6.85685 8.1392 6.90235 8.07745C7.19427 7.6833 7.53642 7.6669 7.99468 7.69488V6.9582C7.99468 6.94373 8.11078 6.75027 8.13827 6.72567C8.34299 6.54138 8.82163 6.69238 8.82163 6.91623V7.69488H8.82068ZM9.14056 9.17837C8.7605 9.23819 8.44346 9.57396 8.36906 9.95074C8.27475 10.4298 8.26433 12.4686 8.38422 12.9167C8.50412 13.3649 8.89034 13.5965 9.33581 13.6322C9.9514 13.6814 11.1286 13.6915 11.7351 13.6303C12.2304 13.5806 12.6218 13.2482 12.6678 12.7272C12.7246 12.0773 12.7299 10.7183 12.6654 10.0738C12.6142 9.55804 12.2749 9.2324 11.7726 9.17258C11.2551 9.11131 9.6391 9.09973 9.14056 9.17837Z" fill="white"/>
+                    <path d="M9.26341 9.9774L11.6964 9.96631C11.8206 9.97017 11.9201 10.0729 11.9239 10.1979C11.8689 10.9457 11.9897 11.7807 11.9239 12.5174C11.9087 12.6872 11.8822 12.8078 11.6964 12.8334C10.987 12.9304 10.0681 12.7548 9.33497 12.8334C9.19896 12.8247 9.12409 12.7336 9.1075 12.6018C9.01556 11.8734 9.1819 10.9485 9.1075 10.1979L9.26294 9.9774H9.26341Z" fill="white"/>
+                </svg>
+                    EDUCATOR IDEAS</button>
+                <button class="alert-top-btn" data-tab="scanner"><svg width="21" height="31" viewBox="0 0 21 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.70594 0.888378C13.7876 0.624969 17.5527 2.45147 19.6109 6.06972C21.4998 9.39032 21.5164 13.7274 19.327 16.9062C18.0423 18.7713 16.2808 19.7173 15.7955 22.1396C15.6012 23.1088 15.6941 23.9584 15.5865 24.8697C15.5728 24.9865 15.5382 25.1905 15.4169 25.2277L5.54417 25.1659L5.49773 25.0685C5.44892 23.6902 5.43613 22.2043 4.87503 20.9263C4.32436 19.672 3.22729 18.8021 2.37144 17.7823C-3.0779 11.2901 1.49188 1.41809 9.70594 0.888378ZM6.87914 23.7828L14.1734 23.7688C14.3269 22.9458 14.3402 22.1382 14.5629 21.319C15.124 19.2518 16.2822 18.4051 17.5594 16.8917C21.8761 11.7755 19.0009 3.93736 12.6631 2.52962C6.2081 1.09583 0.408082 6.28633 1.58714 13.0327C2.27192 16.9501 5.63658 17.9627 6.53699 21.5018C6.72797 22.2525 6.74835 23.0225 6.87914 23.7833V23.7828Z" fill="white"/>
+                    <path d="M6.51694 27.6491C6.36055 27.6009 6.36813 26.6341 6.39941 26.4681C6.43069 26.3022 6.61077 26.2433 6.75151 26.2477L14.3808 26.253C14.4514 26.2645 14.5594 26.3089 14.6002 26.3673C14.6604 26.4537 14.6694 27.2907 14.6428 27.4311C14.631 27.4943 14.5092 27.6491 14.4779 27.6491H6.51646H6.51694Z" fill="white"/>
+                    <path d="M7.6636 28.72L13.2963 28.7084C13.6901 28.7614 13.5134 29.2704 13.4214 29.516C13.2442 29.9883 12.7869 30.4799 12.322 30.6642C11.7282 30.8991 9.62932 30.9184 9.00378 30.7631C8.44742 30.6246 7.89723 30.146 7.66976 29.6125C7.58303 29.4084 7.34893 28.8169 7.6636 28.7209V28.72Z" fill="white"/>
+                    <path d="M8.82068 7.69488H10.1026V6.91623C10.1026 6.86847 10.2618 6.69865 10.3201 6.67453C10.5423 6.58239 10.9295 6.69431 10.9295 6.9582V7.69488H12.2114V6.91623C12.2114 6.68515 12.7313 6.51581 12.9327 6.77102C12.9535 6.79755 13.0384 6.98474 13.0384 7.00018V7.69488C13.8914 7.55642 14.415 8.21398 14.3203 9.04232C14.6752 9.05679 15.4221 8.8947 15.3533 9.48037C15.3382 9.61015 15.1662 9.8422 15.0444 9.8422H14.3207V11.0628H15.0444C15.2922 11.0628 15.4249 11.4395 15.3079 11.6677C15.2823 11.7174 15.1249 11.8626 15.0856 11.8626H14.3207V13.1256H15.0856C15.1557 13.1256 15.3287 13.3239 15.3467 13.4088C15.4846 14.0567 14.6652 13.9231 14.279 13.925C14.3942 14.7302 13.8146 15.2778 13.0384 15.1881C13.0682 15.6054 13.0938 16.384 12.4474 16.1896C12.391 16.1727 12.2114 15.9672 12.2114 15.9247V15.1881H10.9295V15.8828C10.9295 15.8972 10.8134 16.0907 10.7859 16.1153C10.5812 16.2996 10.1026 16.1486 10.1026 15.9247V15.1881H8.82068V15.9247C8.82068 15.9971 8.62733 16.1698 8.54345 16.1891C7.90511 16.3377 7.98046 15.6116 7.9942 15.1876C7.22744 15.2884 6.58768 14.7312 6.71231 13.925H5.94744C5.80528 13.925 5.64368 13.6645 5.63894 13.5208C5.63467 13.4021 5.79675 13.1252 5.90622 13.1252H6.71279V11.8621H5.90622C5.78869 11.8621 5.64368 11.5785 5.6432 11.4622C5.6432 11.3358 5.84224 11.0623 5.94744 11.0623H6.71231V9.84171H5.94744C5.84224 9.84171 5.64273 9.56817 5.6432 9.44178C5.6432 9.32551 5.78821 9.04184 5.90622 9.04184H6.71279V8.43156C6.71279 8.37463 6.85685 8.1392 6.90235 8.07745C7.19427 7.6833 7.53642 7.6669 7.99468 7.69488V6.9582C7.99468 6.94373 8.11078 6.75027 8.13827 6.72567C8.34299 6.54138 8.82163 6.69238 8.82163 6.91623V7.69488H8.82068ZM9.14056 9.17837C8.7605 9.23819 8.44346 9.57396 8.36906 9.95074C8.27475 10.4298 8.26433 12.4686 8.38422 12.9167C8.50412 13.3649 8.89034 13.5965 9.33581 13.6322C9.9514 13.6814 11.1286 13.6915 11.7351 13.6303C12.2304 13.5806 12.6218 13.2482 12.6678 12.7272C12.7246 12.0773 12.7299 10.7183 12.6654 10.0738C12.6142 9.55804 12.2749 9.2324 11.7726 9.17258C11.2551 9.11131 9.6391 9.09973 9.14056 9.17837Z" fill="white"/>
+                    <path d="M9.26341 9.9774L11.6964 9.96631C11.8206 9.97017 11.9201 10.0729 11.9239 10.1979C11.8689 10.9457 11.9897 11.7807 11.9239 12.5174C11.9087 12.6872 11.8822 12.8078 11.6964 12.8334C10.987 12.9304 10.0681 12.7548 9.33497 12.8334C9.19896 12.8247 9.12409 12.7336 9.1075 12.6018C9.01556 11.8734 9.1819 10.9485 9.1075 10.1979L9.26294 9.9774H9.26341Z" fill="white"/>
+                </svg>
+                    SCANNERS IDEAS</button>
+            </div>
+            <div id="scannerControls" class="scanner-controls">
+                <div class="scanner-header">
+                    <span class="scanner-label"><i class="fa-solid fa-star"></i> Basic</span>
+                    <div class="scanner-dropdown">TREND WAVE SCANNER <span class="dropdown-arrow"><i class="fa-solid fa-chevron-down"></i></span></div>
+                </div>
+                <div class="scanner-timeframes">
+                    <button class="timeframe-btn">1m</button>
+                    <button class="timeframe-btn active">5m</button>
+                    <button class="timeframe-btn">15m</button>
+                    <button class="timeframe-btn">1hr</button>
+                    <button class="timeframe-btn">4hr</button>
+                    <button class="timeframe-btn">1D</button>
+                </div>
+            </div>
+            <div id="alertCategoryButtons" class="category-buttons">
+                <button class="category-btn" data-alert-category="forex"><i class="fa-solid fa-dollar-sign"></i> Forex</button>
+                <button class="category-btn" data-alert-category="commodities"><i class="fa-solid fa-box"></i> Commodities</button>
+                <button class="category-btn active" data-alert-category="crypto"><i class="fa-brands fa-btc"></i> Crypto</button>
+                <button class="category-btn" data-alert-category="indices"><i class="fa-solid fa-chart-line"></i> Indices</button>
+            </div>
+            <div class="alerts-list" id="alertsList"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    class MarketDashboard {
+        constructor() {
+            this.currentCategory = 'crypto';
+            this.currentTab = 'all';
+            this.searchQuery = '';
+            this.favorites = new Set();
+            this.currentTimeframe = '1h';
+            this.currentAlertCategory = 'crypto';
+            this.currentAlertTab = 'educator';
+
+            this.loadFavoritesFromStorage();
+
+            this.assets = {
+                crypto: [
+                    {id: 'btc', name: 'Bitcoin', symbol: 'BTC', price: 108754.63, change: 0.05, icon: 'btc'},
+                    {id: 'eth', name: 'Ethereum', symbol: 'ETH', price: 4700.23, change: 0.05, icon: 'eth'},
+                    {id: 'xrp', name: 'XRP', symbol: 'XRP', price: 2.18, change: -1.22, icon: 'xrp'},
+                    {id: 'usdt', name: 'Tether', symbol: 'USDT', price: 1.00, change: -1.25, icon: 'usdt'},
+                    {id: 'bnb', name: 'BNB', symbol: 'BNB', price: 692.45, change: -1.03, icon: 'bnb'},
+                    {id: 'sol', name: 'Solana', symbol: 'SOL', price: 200.16, change: 4.05, icon: 'sol'},
+                    {id: 'doge', name: 'Dogecoin', symbol: 'DOGE', price: 0.41, change: 2.07, icon: 'doge'},
+                    {id: 'usdc', name: 'USDC', symbol: 'USDC', price: 1.00, change: 3.09, icon: 'usdc'},
+                    {id: 'ada', name: 'Cardano', symbol: 'ADA', price: 1.05, change: 3.09, icon: 'ada'}
+                ],
+                forex: [
+                    {id: 'eurusd', name: 'EUR/USD', symbol: 'EURUSD', price: 1.0525, change: 0.15, icon: 'eur'},
+                    {id: 'gbpusd', name: 'GBP/USD', symbol: 'GBPUSD', price: 1.2650, change: -0.25, icon: 'gbp'},
+                    {id: 'usdjpy', name: 'USD/JPY', symbol: 'USDJPY', price: 149.50, change: 0.45, icon: 'jpy'},
+                    {id: 'audusd', name: 'AUD/USD', symbol: 'AUDUSD', price: 0.6580, change: -0.18, icon: 'aud'}
+                ],
+                commodities: [
+                    {id: 'gold', name: 'Gold', symbol: 'XAUUSD', price: 2018.50, change: 0.75, icon: 'gold'},
+                    {id: 'silver', name: 'Silver', symbol: 'XAGUSD', price: 24.18, change: -1.20, icon: 'silver'},
+                    {id: 'oil', name: 'Crude Oil', symbol: 'USOIL', price: 73.45, change: 2.15, icon: 'oil'},
+                    {id: 'gas', name: 'Natural Gas', symbol: 'NGAS', price: 2.85, change: -0.95, icon: 'gas'}
+                ],
+                indices: [
+                    {id: 'sp500', name: 'S&P 500', symbol: 'SPX', price: 4890.25, change: 0.35, icon: 'sp500'},
+                    {id: 'nasdaq', name: 'NASDAQ', symbol: 'NASDAQ', price: 15240.80, change: 0.68, icon: 'nasdaq'},
+                    {id: 'dow', name: 'Dow Jones', symbol: 'DJI', price: 37850.15, change: -0.12, icon: 'dow'},
+                    {id: 'dax', name: 'DAX', symbol: 'DAX', price: 16890.45, change: 0.22, icon: 'dax'}
+                ]
+            };
+
+            this.alerts = {
+                crypto: [
+                    {
+                        id: 'alert1',
+                        status: 'ACTIVE',
+                        user: 'Daniel Lopez',
+                        pair: 'BTC/USD',
+                        icon: 'btc',
+                        timeframe: '5m',
+                        order: 'Buy Limit',
+                        time: '3hrs 20mins ago',
+                        poi: '67500',
+                        invalidation: '67000',
+                        exit1: '69000',
+                        exit2: '70000'
+                    },
+                    {
+                        id: 'alert2',
+                        status: 'PENDING',
+                        user: 'Jane Smith',
+                        pair: 'ETH/USD',
+                        icon: 'eth',
+                        timeframe: '15m',
+                        order: 'Sell Limit',
+                        time: '1hr ago',
+                        poi: '4800',
+                        invalidation: '4900',
+                        exit1: '4600',
+                        exit2: '4500'
+                    }
+                ],
+                forex: [],
+                commodities: [],
+                indices: []
+            };
+
+            this.init();
+        }
+
+        init() {
+            this.setupEventListeners();
+            this.renderAssets();
+            this.renderAlerts();
+        }
+
+        loadFavoritesFromStorage() {
+            try {
+                const savedFavorites = localStorage.getItem('marketDashboardFavorites');
+                if (savedFavorites) {
+                    this.favorites = new Set(JSON.parse(savedFavorites));
+                }
+            } catch (error) {
+                console.error('Error loading favorites from localStorage:', error);
+                this.favorites = new Set();
+            }
+        }
+
+        saveFavoritesToStorage() {
+            try {
+                localStorage.setItem('marketDashboardFavorites', JSON.stringify([...this.favorites]));
+            } catch (error) {
+                console.error('Error saving favorites to localStorage:', error);
+            }
+        }
+
+        setupEventListeners() {
+            document.getElementById('trendDropdown').addEventListener('click', () => {
+                console.log('Trend Wave dropdown clicked');
+            });
+            document.getElementById('saveChart').addEventListener('click', () => {
+                console.log('Save Chart clicked');
+            });
+            document.getElementById('loadChart').addEventListener('click', () => {
+                console.log('Load Chart clicked');
+            });
+
+            document.getElementById('assetsBtn').addEventListener('click', () => {
+                this.showAssetsSidebar();
+            });
+            document.getElementById('alertNotifications').addEventListener('click', () => {
+                this.showAlertsSidebar();
+            });
+
+            document.querySelectorAll('#assetsSidebar .category-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const category = e.currentTarget.dataset.category;
+                    this.setActiveCategory(category);
+                });
+            });
+
+            document.querySelectorAll('#alertCategoryButtons .category-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const category = e.currentTarget.dataset.alertCategory;
+                    this.setActiveAlertCategory(category);
+                });
+            });
+
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    const tabName = e.currentTarget.dataset.tab;
+                    if (tabName) {
+                        this.setActiveTab(tabName);
+                    }
+                });
+            });
+
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                this.searchQuery = e.target.value.toLowerCase();
+                this.renderAssets();
+            });
+
+            document.querySelectorAll('#alertsSidebar .alert-top-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const tab = e.currentTarget.dataset.tab;
+                    this.currentAlertTab = tab;
+                    document.querySelectorAll('#alertsSidebar .alert-top-btn').forEach(b => b.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    if (tab === 'scanner') {
+                        document.getElementById('scannerControls').style.display = 'flex';
+                        document.getElementById('alertCategoryButtons').style.display = 'none';
+                    } else {
+                        document.getElementById('scannerControls').style.display = 'none';
+                        document.getElementById('alertCategoryButtons').style.display = 'grid';
+                    }
+                });
+            });
+
+            document.querySelectorAll('#scannerControls .timeframe-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('#scannerControls .timeframe-btn').forEach(b => b.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                });
+            });
+        }
+
+        showAssetsSidebar() {
+            document.getElementById('assetsSidebar').style.display = 'flex';
+            document.getElementById('alertsSidebar').style.display = 'none';
+            document.getElementById('assetsBtn').classList.add('assets-active');
+            document.getElementById('alertNotifications').classList.remove('alerts-active');
+        }
+
+        showAlertsSidebar() {
+            document.getElementById('assetsSidebar').style.display = 'none';
+            document.getElementById('alertsSidebar').style.display = 'flex';
+            document.getElementById('alertNotifications').classList.add('alerts-active');
+            document.getElementById('assetsBtn').classList.remove('assets-active');
+            if (this.currentAlertTab === 'scanner') {
+                document.getElementById('scannerControls').style.display = 'flex';
+                document.getElementById('alertCategoryButtons').style.display = 'none';
+            } else {
+                document.getElementById('scannerControls').style.display = 'none';
+                document.getElementById('alertCategoryButtons').style.display = 'grid';
+            }
+        }
+
+        setActiveCategory(category) {
+            this.currentCategory = category;
+            document.querySelectorAll('#assetsSidebar .category-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.category === category) {
+                    btn.classList.add('active');
+                }
+            });
+            this.renderAssets();
+        }
+
+        setActiveAlertCategory(category) {
+            this.currentAlertCategory = category;
+            document.querySelectorAll('#alertCategoryButtons .category-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.alertCategory === category) {
+                    btn.classList.add('active');
+                }
+            });
+            this.renderAlerts();
+        }
+
+        setActiveTab(tab) {
+            this.currentTab = tab;
+            document.querySelectorAll('.tab').forEach(tabBtn => {
+                tabBtn.classList.remove('active');
+                if (tabBtn.dataset.tab === tab) {
+                    tabBtn.classList.add('active');
+                }
+            });
+            this.renderAssets();
+        }
+
+        toggleFavorite(assetId) {
+            if (this.favorites.has(assetId)) {
+                this.favorites.delete(assetId);
+            } else {
+                this.favorites.add(assetId);
+            }
+            this.saveFavoritesToStorage();
+            this.renderAssets();
+        }
+
+        getFilteredAssets() {
+            let assets = this.assets[this.currentCategory] || [];
+            if (this.searchQuery) {
+                assets = assets.filter(asset =>
+                    asset.name.toLowerCase().includes(this.searchQuery) ||
+                    asset.symbol.toLowerCase().includes(this.searchQuery)
+                );
+            }
+            if (this.currentTab === 'favorites') {
+                assets = assets.filter(asset => this.favorites.has(asset.id));
+            }
+            return assets;
+        }
+
+        getFilteredAlerts() {
+            return this.alerts[this.currentAlertCategory] || [];
+        }
+
+        formatPrice(price) {
+            if (price >= 1000) {
+                return price.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            } else {
+                return Number(price).toFixed(2);
+            }
+        }
+
+        formatChange(change) {
+            const sign = change >= 0 ? '+' : '';
+            return `${sign}${change.toFixed(2)}%`;
+        }
+
+        getAssetIconContent(iconType) {
+            const iconMap = {
+                btc: '₿', eth: 'Ξ', xrp: 'X', usdt: '₮', bnb: 'B', sol: 'S',
+                doge: 'Ð', usdc: '$', ada: '₳', eur: '€', gbp: '£', jpy: '¥', aud: 'A',
+                gold: 'Au', silver: 'Ag', oil: '🛢️', gas: '⛽', sp500: 'S', nasdaq: 'N',
+                dow: 'D', dax: 'X'
+            };
+            return iconMap[iconType] || iconType.charAt(0).toUpperCase();
+        }
+
+        generateMiniChart() {
+            const points = [];
+            const width = 300;
+            const height = 35;
+            const amplitude = 6;
+            const frequency = 0.025;
+            for (let x = 0; x <= width; x += 8) {
+                const y = height / 2 + Math.sin(x * frequency) * amplitude + Math.sin(x * frequency * 3) * amplitude * 0.4;
+                points.push(`${x},${y}`);
+            }
+            return `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg"><path d="M ${points.join(' L ')}" stroke="#9F3DC9" stroke-width="2" fill="none"/></svg>`;
+        }
+
+        renderAssets() {
+            const assetsList = document.getElementById('assetsList');
+            const assets = this.getFilteredAssets();
+            if (assets.length === 0) {
+                assetsList.innerHTML = `<div class="no-assets">${this.currentTab === 'favorites' ? 'No favorites yet' : 'No assets found'}</div>`;
+                return;
+            }
+            assetsList.innerHTML = assets.map(asset => {
+                const isFavorited = this.favorites.has(asset.id);
+                const applyFavoriteUI = (this.currentTab === 'favorites' && isFavorited);
+                const miniChart = applyFavoriteUI ? this.generateMiniChart() : '';
+                return `<div class="asset-item ${applyFavoriteUI ? 'favorited' : ''}">
+                    <div class="asset-content">
+                        <div class="asset-icon ${asset.icon}">${this.getAssetIconContent(asset.icon)}</div>
+                        <div class="asset-info"><div class="asset-name">${asset.name}</div><div class="asset-symbol">${asset.symbol}</div></div>
+                        <div class="asset-price">${this.formatPrice(asset.price)}</div>
+                        <div class="asset-change ${asset.change >= 0 ? 'positive' : 'negative'}">${this.formatChange(asset.change)}</div>
+                        <button class="favorite-btn ${isFavorited ? 'favorited' : ''}" onclick="dashboard.toggleFavorite('${asset.id}')">
+                            <i class="fa-solid fa-star ${isFavorited ? 'favorited' : ''}" style="color: ${isFavorited ? '#fbbf24' : 'white'}"></i>
+                        </button>
+                    </div>
+                    ${applyFavoriteUI ? `<div class="mini-chart">${miniChart}</div>` : ''}
+                </div>`;
+            }).join('');
+        }
+
+        renderAlerts() {
+            const alertsList = document.getElementById('alertsList');
+            const alerts = this.getFilteredAlerts();
+            if (alerts.length === 0) {
+                alertsList.innerHTML = `<div class="no-assets">No alerts available</div>`;
+                return;
+            }
+            alertsList.innerHTML = alerts.map(alert => {
+                return `<div class="alert-card ${alert.status.toLowerCase()}">
+                    <div class="alert-header">
+                        <span class="alert-status ${alert.status.toLowerCase()}">${alert.status}</span>
+                        <span class="alert-time">${alert.time}</span>
+                    </div>
+                    <div class="alert-main">
+                        <div class="alert-pair">
+                            <div class="asset-icon ${alert.icon}">${this.getAssetIconContent(alert.icon)}</div>
+                            <span>${alert.pair}</span>
+                        </div>
+                        <div class="alert-meta">
+                            <div>${alert.timeframe}</div>
+                            <div>${alert.order}</div>
+                        </div>
+                    </div>
+                    <div class="alert-table">
+                        <div class="alert-row poi"><span class="label">Point of Interest</span><span class="value">${alert.poi}<button class="copy-btn" data-price="${alert.poi}"><i class="fa-regular fa-copy"></i></button></span></div>
+                        <div class="alert-row invalidation"><span class="label">Invalidation</span><span class="value">${alert.invalidation}<button class="copy-btn" data-price="${alert.invalidation}"><i class="fa-regular fa-copy"></i></button></span></div>
+                        <div class="alert-row exit1"><span class="label">Exit 1</span><span class="value">${alert.exit1}<button class="copy-btn" data-price="${alert.exit1}"><i class="fa-regular fa-copy"></i></button></span></div>
+                        <div class="alert-row exit2"><span class="label">Exit 2</span><span class="value">${alert.exit2}<button class="copy-btn" data-price="${alert.exit2}"><i class="fa-regular fa-copy"></i></button></span></div>
+                    </div>
+                    <img class="mini-chart" src="alert-mini-chart.png" alt="chart" />
+                </div>`;
+            }).join('');
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const value = e.currentTarget.dataset.price;
+                    navigator.clipboard.writeText(value);
+                    console.log('Copied', value);
+                });
+            });
+        }
+    }
+
+    const dashboard = new MarketDashboard();
+</script>
+</body>
+</html>

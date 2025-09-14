@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Data Dashboard</title>
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: rgb( 43 37 37);
+            color: #ffffff;
+            font-family: "Inter", sans-serif;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            font-family: "Inter", sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            background-color: #1a1a1a;
+            border-bottom: 1px solid #333;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            min-height: 50px;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 18px;
+            color: #ffffff;
+            margin-right: 8px;
+        }
+
+        .trend-dropdown {
+            background-color: #2a2a2a;
+            color: #8b5cf6;
+            border: 1px solid #333;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 140px;
+        }
+
+        .trend-dropdown:hover {
+            background-color: #333;
+        }
+
+        .dropdown-arrow {
+            font-size: 10px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .nav-btn {
+            background: linear-gradient(225deg, #F2F2F2 -0.32%, #E6E6E6 99.68%);
+            box-shadow: 0px 0px 15px 0px rgba(215, 184, 86, 0.65);
+
+            border: 1px solid rgba(255, 255, 255, 1);
+            gap: 10px;
+
+            opacity: 1;
+
+font-family: "Inter", sans-serif;
+            font-weight: 500;
+            color: rgba(0, 0, 0, 1);
+
+            padding: 10px 50px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+
+        }
+        .nav-head-btn {
+
+            background: linear-gradient(90deg, #333333 0%, #262626 100%);
+            border: 1px solid rgba(51, 51, 51, 1);
+
+color: rgba(255, 255, 255, 1);
+            gap: 10px;
+
+            opacity: 1;
+
+font-family: "Inter", sans-serif;
+            font-weight: 500;
+
+            padding: 10px 50px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+
+        }
+
+        .nav-btn:hover {
+            background-color: #333;
+        }
+
+        .nav-btn.assets-active {
+            box-shadow: none;
+            background: linear-gradient(90deg, #9F3DC9 0%, #4E1E63 100%);
+color: rgba(255, 255, 255, 1);
+            border: 1px solid rgba(159, 61, 201, 1);
+
+        }
+
+        /* Secondary Toolbar */
+        .secondary-toolbar {
+            background-color: #1a1a1a;
+            border-bottom: 1px solid #333;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            min-height: 45px;
+        }
+
+        .symbol-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .symbol-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .info-icon {
+            width: 16px;
+            height: 16px;
+            border: 1px solid #666;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #666;
+        }
+
+        .timeframe-buttons {
+            display: flex;
+            gap: 4px;
+            margin-left: 12px;
+        }
+
+        .timeframe-btn {
+            background-color: #2a2a2a;
+            color: #888;
+            border: 1px solid #333;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .timeframe-btn:hover {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .timeframe-btn.active {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .chart-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 12px;
+        }
+
+        .control-icon {
+            width: 28px;
+            height: 28px;
+            background-color: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .control-icon:hover {
+            background-color: #333;
+        }
+
+        .indicators-btn {
+            background-color: #2a2a2a;
+            color: white;
+            border: 1px solid #333;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: auto;
+        }
+
+        .indicators-btn:hover {
+            background-color: #333;
+        }
+
+        /* Content Area */
+        .content-area {
+            display: flex;
+            flex: 1;
+            margin-top: 20px;
+            background: rgb( 43 37 37);
+        }
+
+        .chart-area {
+            flex: 1;
+
+            background: rgb( 43 37 37);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 500px;
+        }
+
+        .chart-placeholder {
+            text-align: center;
+            color: #666;
+        }
+
+        /* Sidebar */
+        .sidebar {
+
+            width: 380px;
+            background: linear-gradient(90deg, #1A1A1A 0%, #0D0D0D 100%);
+border-radius: 10px;
+            border-left: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 95px);
+            overflow: hidden;
+        }
+
+        .category-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 16px;
+            background: linear-gradient(90deg, #1A1A1A 0%, #0D0D0D 100%);
+
+        }
+
+        .category-btn {
+            background: linear-gradient(90deg, #000000 0%, #0D0D0D 100%);
+            border: 1px solid transparent;
+            color: #ffffff;
+            padding: 12px 16px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .category-btn:hover {
+            background-color: #333333;
+        }
+
+        .category-btn.active {
+
+            color: rgba(159, 61, 201, 1);
+  border-radius: 5px;
+            border: 1px solid transparent; /* Set a transparent border to create the necessary width */
+            border-image: linear-gradient(180deg, #000000 0%, #9F3DC9 100%) 1; /* Apply the gradient and slice it */
+
+            border-image-source: linear-gradient(180deg, #000000 0%, #9F3DC9 100%);
+            background: linear-gradient(90deg, #000000 0%, #0D0D0D 100%) border-box;
+
+
+
+
+        }
+
+        .tabs {
+            align-items: center;
+            justify-content: center;
+            justify-items: center;
+            align-content: center;
+            background: linear-gradient(90deg, #333333 0%, #1A1A1A 100%);
+            border: 1px solid rgba(51, 51, 51, 1);
+            display: flex;
+            gap: 8px;
+            border-radius: 5px;
+            width: 90%;
+            align-self: center;
+            padding: 6px;
+            margin-bottom: 10px;
+        }
+
+        .tab {
+
+            border-radius: 5px;
+
+
+
+            flex: 1;
+            align-self: center;
+            background-color: transparent;
+            color: #ffffff;
+            border: none;
+            padding: 14px 26px;
+
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab:hover {
+            background-color: #333333;
+        }
+
+        .tab.active {
+            background: linear-gradient(90deg, #9F3DC9 0%, #4E1E63 100%);;
+            color: white;
+        }
+
+        .search-container {
+            flex-direction: row;
+            justify-items: center;
+            justify-content: space-between;
+            padding: 6px;
+            width: 100%;
+            position: relative;
+
+
+        }
+
+
+        .search-input-container {
+            flex-direction: row;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+
+            width: 95%;
+            background: linear-gradient(90deg, #1A1A1A 0%, #0D0D0D 100%);
+            color: #ffffff;
+
+            border-radius: 100px;
+            font-size: 14px;
+        }
+
+        .search-input {
+            border: 1px solid rgba(51, 51, 51, 51);
+            width: 90%;
+
+            background: linear-gradient(90deg, #1A1A1A 0%, #0D0D0D 100%);
+            color: #ffffff;
+            padding: 12px 16px 12px 45px;
+            border-top-left-radius: 100px;
+            border-bottom-left-radius: 100px;
+
+            font-size: 14px;
+        }
+
+        .search-input::placeholder {
+
+            color: #fff;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+
+        .search-icon {
+
+            background: rgba(51, 51, 51, 1);
+            align-items: center;
+            align-content: center;
+            justify-items: center;
+            justify-content: center;
+            width: 43px;
+            height: 42px;
+
+            opacity: 1;
+            padding-right: 14px;
+            padding-left: 14px;
+            border-width: 1px;
+            border-top-right-radius: 100px;
+            border-bottom-right-radius: 100px;
+
+
+            color: #666666;
+            pointer-events: none;
+        }
+
+        .assets-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 16px 16px 16px;
+        }
+
+        .asset-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 0.5px solid rgba(81, 81, 81, 1);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+
+        }
+
+        .asset-item:hover {
+            background-color: #333333;
+            border-color: #444444;
+        }
+
+        .asset-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            color: white;
+        }
+
+        .btc {
+            background-color: #f7931a;
+        }
+
+        .eth {
+            background-color: #627eea;
+        }
+
+        .xrp {
+            background-color: #23292f;
+        }
+
+        .usdt {
+            background-color: #26a17b;
+        }
+
+        .bnb {
+            background-color: #f3ba2f;
+        }
+
+        .sol {
+            background-color: #9945ff;
+        }
+
+        .doge {
+            background-color: #c2a633;
+        }
+
+        .usdc {
+            background-color: #2775ca;
+        }
+
+        .ada {
+            background-color: #0033ad;
+        }
+
+        .asset-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .asset-name {
+            font-family: "Inter", sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .asset-symbol {
+            font-weight: 500;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 1);
+        }
+
+        .asset-price {
+            font-size: 14px;
+            font-weight: 500;
+            margin-right: 12px;
+        }
+
+        .asset-change {
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 12px;
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .positive {
+            color: rgba(150, 214, 64, 1);
+        }
+
+        .negative {
+            color: rgba(247, 107, 79, 1);
+        }
+
+        .favorite-btn {
+            width: 26px;
+            height: 26px;
+
+            opacity: 1;
+
+            align-items: center;
+            justify-items: center;
+            border: none;
+            cursor: pointer;
+
+
+
+
+            border-radius: 100px;
+            transition: background-color 0.2s;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+            linear-gradient(135.86deg, rgba(177, 177, 177, 0.32) 5.24%, rgba(54, 53, 103, 0.2) 51.01%);
+
+        }
+
+        .favorite-btn:hover {
+            background-color: #333333;
+        }
+
+        .star-icon {
+            width: 20px;
+            height: 20px;
+            fill: #666666;
+            transition: fill 0.2s;
+        }
+
+        .star-icon.favorited {
+            fill: #fbbf24;
+        }
+
+        .no-assets {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666666;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .content-area {
+                flex-direction: column;
+            }
+
+            .chart-area {
+                display: none;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: calc(100vh - 95px);
+            }
+
+            .nav-buttons {
+                flex-wrap: wrap;
+            }
+
+            .timeframe-buttons {
+                flex-wrap: wrap;
+            }
+
+            .secondary-toolbar {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .category-buttons {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+                padding: 12px;
+            }
+
+            .category-btn {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            .tabs {
+                padding: 0 12px 12px 12px;
+            }
+
+            .search-container {
+                padding: 0 12px 12px 12px;
+            }
+
+            .assets-list {
+                padding: 0 12px 12px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-nav {
+                padding: 8px 12px;
+                gap: 8px;
+            }
+
+            .secondary-toolbar {
+                padding: 8px 12px;
+                gap: 6px;
+            }
+
+            .timeframe-btn {
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+
+            .asset-item {
+                padding: 10px;
+            }
+
+            .asset-icon {
+                width: 28px;
+                height: 28px;
+                margin-right: 10px;
+            }
+
+            .asset-name {
+                font-size: 13px;
+            }
+
+            .asset-symbol {
+                font-size: 11px;
+            }
+
+            .asset-price {
+                font-size: 13px;
+            }
+
+            .asset-change {
+                font-size: 11px;
+                min-width: 50px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        .assets-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .assets-list::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .assets-list::-webkit-scrollbar-thumb {
+            background: #333333;
+            border-radius: 3px;
+        }
+
+        .assets-list::-webkit-scrollbar-thumb:hover {
+            background: #444444;
+        }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <!-- Top Navigation Bar -->
+    <div class="top-nav">
+        <div class="logo">JIFU</div>
+
+        <div class="trend-dropdown" id="trendDropdown">
+            <span>📊 TREND WAVE SCANNER</span>
+            <span class="dropdown-arrow">▼</span>
+
+        </div>
+        <button class="nav-head-btn" id="saveChart">
+            <svg width="13" height="18" viewBox="0 0 13 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.08061 4.44555H9.82542C10.0219 4.44555 10.1983 4.91616 10.0142 5.07432C8.98791 6.07085 8.07057 7.17993 7.07771 8.20702C6.77512 8.51995 6.288 9.22003 5.83579 8.93136C5.38357 8.64269 4.94283 7.81598 4.44759 7.50208V10.4858C4.44759 10.6037 4.79847 10.89 4.94952 10.8497C6.19144 10.7575 7.60306 10.9724 8.82395 10.8521C9.05627 10.8293 9.37129 10.6532 9.37129 10.3888V6.82285H10.5425C10.6854 6.82285 11.0516 7.05233 11.1658 7.16052C11.5712 7.54622 12.4938 8.58011 12.8131 9.03034C12.9073 9.16327 12.968 9.31076 13.0005 9.47086V17.0797C12.8403 17.7885 12.3791 17.8972 11.7404 17.9355C8.25796 18.1422 4.57905 17.7744 1.07605 17.9355C0.500029 17.8913 0.0669343 17.673 0.000488281 17.0379L0.0024004 7.67237C0.0344283 7.37011 0.244283 7.05961 0.51676 6.93298C0.556914 6.91406 0.82222 6.82382 0.839429 6.82382H3.87491L2.25583 5.04667C2.12437 4.85503 2.21137 4.44652 2.46473 4.44652H4.20953V0.39445C4.20953 0.366796 4.31948 0.135374 4.3539 0.104323C4.43182 0.0349452 4.51786 0.0368859 4.61347 0.0281529C5.60108 -0.0625724 6.72158 0.101412 7.724 0.0291233C7.84112 0.000498695 8.08157 0.204752 8.08157 0.296933V4.44507L8.08061 4.44555ZM10.5186 17.3994V13.4938C10.5186 13.389 10.2666 13.1178 10.1376 13.1042L2.9418 13.0814C2.7568 13.0548 2.43987 13.3206 2.43987 13.4938V17.3994H10.5186Z" fill="white"/>
+            </svg>
+            Save Chart
+        </button>
+        <button class="nav-head-btn" id="loadChart">
+            <svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_150_694)">
+                    <path d="M15.3724 7.26148C14.5798 2.4694 9.06693 -0.171403 4.7409 2.45946C0.0870787 5.29058 0.26482 12.2699 5.12455 14.8137C8.6284 16.6477 12.5086 15.325 14.4885 12.1047C14.7493 11.6805 14.9853 10.8515 15.7099 11.3117C16.3883 11.7425 15.706 12.7325 15.3923 13.2229C12.7854 17.2973 7.06126 18.255 3.20824 15.2142C-1.39119 11.583 -0.991513 4.27034 4.0615 1.22901C9.36705 -1.96476 15.9668 1.42454 16.7812 7.26101C17.1416 7.32161 18.0356 7.05364 17.9992 7.61656L16.3641 9.90891C16.1368 10.0988 16.028 10.0116 15.86 9.84027C15.57 9.5439 14.5293 8.12739 14.3448 7.76711C14.3055 7.69041 14.2481 7.62792 14.2632 7.53276C14.2729 7.47074 14.44 7.26195 14.474 7.26195H15.3724V7.26148Z" fill="white"/>
+                    <path d="M7.54203 8.59941C7.8475 8.55633 9.16356 8.5497 9.41075 8.64676C9.55304 8.70309 9.62589 8.84512 9.64337 8.9881C9.68902 9.36921 9.68125 10.2583 9.64434 10.6484C9.622 10.8889 9.54139 11.0196 9.27866 11.0494C8.89744 11.093 7.86012 11.0935 7.47987 11.0494C7.29388 11.0276 7.13993 10.9339 7.11419 10.7431C7.07048 10.4212 7.06951 9.21109 7.11953 8.8972C7.15547 8.67469 7.3371 8.62782 7.54203 8.59894V8.59941Z" fill="white"/>
+                    <path d="M10.8919 7.13034C11.2091 7.07448 12.3411 7.08016 12.6786 7.11803C12.9034 7.1436 13.0171 7.25533 13.0428 7.47311C13.0729 7.72497 13.0797 9.11307 13.02 9.29913C12.9904 9.39145 12.8937 9.48046 12.801 9.5117C12.4873 9.61728 11.0595 9.62675 10.7584 9.51076C10.5991 9.44921 10.535 9.34364 10.5151 9.17983C10.4505 8.63869 10.5637 7.98299 10.517 7.42813C10.5462 7.27852 10.7487 7.15591 10.8915 7.13034H10.8919Z" fill="white"/>
+                    <path d="M3.89881 6.32596C4.2237 6.26773 5.08813 6.28809 5.44313 6.31271C5.7515 6.33401 5.96858 6.33354 6.07348 6.64505C6.17838 6.95657 6.18518 7.98013 6.14535 8.32669C6.11767 8.56719 6.04337 8.70117 5.7821 8.73005C5.36445 8.77692 4.35677 8.77219 3.93281 8.73194C3.74681 8.71443 3.64434 8.66898 3.61763 8.47108C3.57344 8.14063 3.5715 6.89929 3.62346 6.5783C3.65114 6.40787 3.73127 6.35626 3.8993 6.32644L3.89881 6.32596Z" fill="white"/>
+                    <path d="M8.91346 8.39775H7.7965C7.84361 7.34673 7.73434 6.24553 7.79456 5.20019C7.80379 5.04443 7.82758 4.73765 7.85624 4.59751C7.92471 4.26421 8.34624 4.13875 8.64005 4.28504C8.70221 4.31582 8.91346 4.53644 8.91346 4.58662V8.39775Z" fill="white"/>
+                    <path d="M5.41691 8.91852V12.5403C5.41691 12.7117 5.0896 12.9332 4.90651 12.9455C4.71129 12.9588 4.29996 12.7798 4.29996 12.5876V8.91852H5.41691Z" fill="white"/>
+                    <path d="M12.3615 9.77069V12.5403C12.3615 12.562 12.2876 12.696 12.2643 12.7296C11.9832 13.134 11.2445 12.9129 11.2445 12.5403V9.77069H12.3615Z" fill="white"/>
+                    <path d="M12.3615 6.93007H11.2445V4.72861C11.2445 4.28832 11.8987 4.0393 12.2163 4.39674C12.242 4.42562 12.3615 4.6202 12.3615 4.63393V6.93007Z" fill="white"/>
+                    <path d="M5.36835 6.17262H4.29996V4.68131C4.29996 4.29262 4.87689 4.09046 5.19207 4.33239C5.23772 4.36742 5.36835 4.55585 5.36835 4.58662V6.17262Z" fill="white"/>
+                    <path d="M8.91347 11.333V12.5403C8.91347 12.9081 8.1753 13.1074 7.9184 12.7528C7.88538 12.7074 7.79651 12.4385 7.79651 12.3982V11.333H8.91347Z" fill="white"/>
+                </g>
+                <defs>
+                    <clipPath id="clip0_150_694">
+                        <rect width="18" height="17" fill="white"/>
+                    </clipPath>
+                </defs>
+            </svg>
+            Load Chart
+        </button>
+        <div class="nav-buttons">
+
+            <button class="nav-btn assets-active" id="assetsBtn">
+                Assets
+            </button>
+            <button class="nav-btn" id="alertNotifications">
+                <svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M8 0C4.68629 0 2 2.68629 2 6V9L0.585787 10.4142C0.210714 10.7893 0 11.298 0 11.8284L0 13C0 14.1046 0.895431 15 2 15H4.12701C4.30416 15.686 4.66203 16.3189 5.17157 16.8284C5.92172 17.5786 6.93913 18 8 18C9.06087 18 10.0783 17.5786 10.8284 16.8284C11.338 16.3189 11.6958 15.686 11.873 15H14C15.1046 15 16 14.1046 16 13V11.8284C16 11.298 15.7893 10.7893 15.4142 10.4142L14 9V6C14 2.68629 11.3137 0 8 0ZM10.2913 15H5.70871C5.83253 15.2837 6.00912 15.5447 6.23223 15.7678C6.70107 16.2366 7.33696 16.5 8 16.5C8.66304 16.5 9.29893 16.2366 9.76777 15.7678C9.99088 15.5447 10.1675 15.2837 10.2913 15Z" fill="black"/>
+                    <circle cx="14" cy="2" r="2" fill="#FF0000"/>
+                </svg>
+                Alert Notifications
+            </button>
+        </div>
+    </div>
+
+    <!-- Secondary Toolbar -->
+    <div class="secondary-toolbar" style="display: none;">
+
+
+        <button class="indicators-btn" >
+
+        </button>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content-area">
+        <div class="chart-area">
+            <div class="chart-placeholder">
+                <h2>Trading Chart Area</h2>
+                <p>Chart visualization would appear here</p>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="category-buttons">
+                <button class="category-btn" data-category="forex">
+                    <i class="fa-solid fa-dollar-sign active"></i> Forex
+                </button>
+                <button class="category-btn" data-category="commodities">
+                    <svg class="active" width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path class="active" d="M1.5 13.75C1.2875 13.75 1.10938 13.6781 0.965625 13.5344C0.821875 13.3906 0.75 13.2125 0.75 13C0.75 12.7875 0.821875 12.6094 0.965625 12.4656C1.10938 12.3219 1.2875 12.25 1.5 12.25H2.25V7.75H1.5C1.2875 7.75 1.10938 7.67813 0.965625 7.53438C0.821875 7.39063 0.75 7.2125 0.75 7C0.75 6.7875 0.821875 6.60938 0.965625 6.46563C1.10938 6.32188 1.2875 6.25 1.5 6.25H2.25V1.75H1.5C1.2875 1.75 1.10938 1.67813 0.965625 1.53438C0.821875 1.39062 0.75 1.2125 0.75 1C0.75 0.7875 0.821875 0.609375 0.965625 0.465625C1.10938 0.321875 1.2875 0.25 1.5 0.25H13.5C13.7125 0.25 13.8906 0.321875 14.0344 0.465625C14.1781 0.609375 14.25 0.7875 14.25 1C14.25 1.2125 14.1781 1.39062 14.0344 1.53438C13.8906 1.67813 13.7125 1.75 13.5 1.75H12.75V6.25H13.5C13.7125 6.25 13.8906 6.32188 14.0344 6.46563C14.1781 6.60938 14.25 6.7875 14.25 7C14.25 7.2125 14.1781 7.39063 14.0344 7.53438C13.8906 7.67813 13.7125 7.75 13.5 7.75H12.75V12.25H13.5C13.7125 12.25 13.8906 12.3219 14.0344 12.4656C14.1781 12.6094 14.25 12.7875 14.25 13C14.25 13.2125 14.1781 13.3906 14.0344 13.5344C13.8906 13.6781 13.7125 13.75 13.5 13.75H1.5ZM3.75 12.25H11.25V7.75C11.0375 7.75 10.8594 7.67813 10.7156 7.53438C10.5719 7.39063 10.5 7.2125 10.5 7C10.5 6.7875 10.5719 6.60938 10.7156 6.46563C10.8594 6.32188 11.0375 6.25 11.25 6.25V1.75H3.75V6.25C3.9625 6.25 4.14063 6.32188 4.28438 6.46563C4.42813 6.60938 4.5 6.7875 4.5 7C4.5 7.2125 4.42813 7.39063 4.28438 7.53438C4.14063 7.67813 3.9625 7.75 3.75 7.75V12.25ZM7.5 10C8.125 10 8.65625 9.78438 9.09375 9.35313C9.53125 8.92188 9.75 8.4 9.75 7.7875C9.75 7.3 9.60938 6.88125 9.32812 6.53125C9.04688 6.18125 8.4375 5.4625 7.5 4.375C6.5625 5.45 5.95312 6.16563 5.67188 6.52188C5.39062 6.87813 5.25 7.3 5.25 7.7875C5.25 8.4 5.46875 8.92188 5.90625 9.35313C6.34375 9.78438 6.875 10 7.5 10Z" fill="white"/>
+                    </svg>
+                    Commodities
+                </button>
+                <button class="category-btn active" data-category="crypto">
+                    <i class="fa-brands fa-btc active"></i> Crypto
+                </button>
+                <button class="category-btn" data-category="indices">
+                    <svg width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0.75 13.75V12.25L2.25 10.75V13.75H0.75ZM3.75 13.75V9.25L5.25 7.75V13.75H3.75ZM6.75 13.75V7.75L8.25 9.26875V13.75H6.75ZM9.75 13.75V9.26875L11.25 7.76875V13.75H9.75ZM12.75 13.75V6.25L14.25 4.75V13.75H12.75ZM0.75 9.86875V7.75L6 2.5L9 5.5L14.25 0.25V2.36875L9 7.61875L6 4.61875L0.75 9.86875Z" fill="white"/>
+                    </svg>
+                    Indices
+                </button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="all">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.32221 9.22074C3.49601 9.26273 4.74664 9.13676 5.91171 9.21147C6.96344 9.27881 7.7318 10.0592 7.80401 11.1078C7.74488 12.2473 7.88411 13.4674 7.80401 14.5973C7.73534 15.5647 7.05962 16.3192 6.1008 16.4648C4.85699 16.3887 3.48919 16.5681 2.25981 16.4648C1.28601 16.383 0.594214 15.508 0.529639 14.5698C0.447081 13.3712 0.56397 12.0466 0.563426 10.8414C0.725544 9.96701 1.43315 9.30581 2.32221 9.22046V9.22074Z" fill="white"/>
+                        <path d="M2.32209 0.542311C3.5482 0.428066 4.96476 0.582937 6.20286 0.568759C7.1189 0.749532 7.74013 1.50316 7.80389 2.42939C7.74476 3.56883 7.88399 4.78899 7.80389 5.91889C7.73713 6.85984 7.01509 7.7119 6.04783 7.78797C4.8239 7.88395 3.47273 7.71681 2.23572 7.78361C1.23739 7.62301 0.594095 6.86638 0.52952 5.86436C0.452684 4.66983 0.559764 3.36298 0.563306 2.16327C0.724608 1.28858 1.43139 0.625472 2.32209 0.542311Z" fill="white"/>
+                        <path d="M11.0157 9.22095C12.2421 9.11516 13.6333 9.2553 14.8692 9.2474C15.7373 9.40881 16.3923 10.1455 16.47 11.0265C16.4043 12.2063 16.5594 13.4837 16.47 14.6521C16.3989 15.5816 15.6894 16.3393 14.7671 16.4652C13.5279 16.3848 12.1492 16.5743 10.9261 16.4652C10.0708 16.3889 9.28881 15.5916 9.22178 14.7352C9.12697 13.5252 9.29562 12.1935 9.22178 10.9706C9.32396 10.0275 10.0743 9.3022 11.0154 9.22095H11.0157Z" fill="white"/>
+                        <path d="M10.9899 0.538512C12.1699 0.42863 13.4895 0.600951 14.6837 0.533877C15.6387 0.629308 16.3867 1.38676 16.4714 2.34407C16.4057 3.52386 16.5608 4.80128 16.4714 5.96962C16.4005 6.89558 15.687 7.65548 14.7685 7.78281C13.5293 7.70238 12.1506 7.89187 10.9275 7.78281C10.0885 7.70783 9.29947 6.91902 9.22454 6.07869C9.11692 4.87135 9.30492 3.51159 9.22318 2.28817C9.31527 1.36522 10.0662 0.624673 10.9899 0.538785V0.538512Z" fill="white"/>
+                    </svg>
+                    ALL
+                </button>
+                <button class="tab" data-tab="favorites">
+                    <i class="fa-solid fa-star"></i> FAVORITES
+                </button>
+            </div>
+
+            <div class="search-container">
+                <div class="search-input-container">
+
+                    <input type="text" class="search-input" placeholder="Search" id="searchInput">
+                    <div class="search-icon"><i class="fa-solid fa-magnifying-glass" style="color:#ffffff;"></i></div>
+                </div>
+            </div>
+
+            <div class="assets-list" id="assetsList">
+                <!-- Assets will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    class MarketDashboard {
+        constructor() {
+            this.currentCategory = 'crypto';
+            this.currentTab = 'all';
+            this.searchQuery = '';
+            this.favorites = new Set();
+            this.currentTimeframe = '1h';
+
+            this.assets = {
+                crypto: [
+                    {id: 'btc', name: 'Bitcoin', symbol: 'BTC', price: 108754.63, change: 0.05, icon: 'btc'},
+                    {id: 'eth', name: 'Ethereum', symbol: 'ETH', price: 4700.23, change: 0.05, icon: 'eth'},
+                    {id: 'xrp', name: 'XRP', symbol: 'XRP', price: 2.18, change: -1.22, icon: 'xrp'},
+                    {id: 'usdt', name: 'Tether', symbol: 'USDT', price: 1.00, change: -1.25, icon: 'usdt'},
+                    {id: 'bnb', name: 'BNB', symbol: 'BNB', price: 692.45, change: -1.03, icon: 'bnb'},
+                    {id: 'sol', name: 'Solana', symbol: 'SOL', price: 200.16, change: 4.05, icon: 'sol'},
+                    {id: 'doge', name: 'Dogecoin', symbol: 'DOGE', price: 0.41, change: 2.07, icon: 'doge'},
+                    {id: 'usdc', name: 'USDC', symbol: 'USDC', price: 1.00, change: 3.09, icon: 'usdc'},
+                    {id: 'ada', name: 'Cardano', symbol: 'ADA', price: 1.05, change: 3.09, icon: 'ada'}
+                ],
+                forex: [
+                    {id: 'eurusd', name: 'EUR/USD', symbol: 'EURUSD', price: 1.0525, change: 0.15, icon: 'eur'},
+                    {id: 'gbpusd', name: 'GBP/USD', symbol: 'GBPUSD', price: 1.2650, change: -0.25, icon: 'gbp'},
+                    {id: 'usdjpy', name: 'USD/JPY', symbol: 'USDJPY', price: 149.50, change: 0.45, icon: 'jpy'},
+                    {id: 'audusd', name: 'AUD/USD', symbol: 'AUDUSD', price: 0.6580, change: -0.18, icon: 'aud'}
+                ],
+                commodities: [
+                    {id: 'gold', name: 'Gold', symbol: 'XAUUSD', price: 2018.50, change: 0.75, icon: 'gold'},
+                    {id: 'silver', name: 'Silver', symbol: 'XAGUSD', price: 24.18, change: -1.20, icon: 'silver'},
+                    {id: 'oil', name: 'Crude Oil', symbol: 'USOIL', price: 73.45, change: 2.15, icon: 'oil'},
+                    {id: 'gas', name: 'Natural Gas', symbol: 'NGAS', price: 2.85, change: -0.95, icon: 'gas'}
+                ],
+                indices: [
+                    {id: 'sp500', name: 'S&P 500', symbol: 'SPX', price: 4890.25, change: 0.35, icon: 'sp500'},
+                    {id: 'nasdaq', name: 'NASDAQ', symbol: 'NASDAQ', price: 15240.80, change: 0.68, icon: 'nasdaq'},
+                    {id: 'dow', name: 'Dow Jones', symbol: 'DJI', price: 37850.15, change: -0.12, icon: 'dow'},
+                    {id: 'dax', name: 'DAX', symbol: 'DAX', price: 16890.45, change: 0.22, icon: 'dax'}
+                ]
+            };
+
+            this.init();
+        }
+
+        init() {
+            this.setupEventListeners();
+            this.renderAssets();
+        }
+
+        setupEventListeners() {
+            // Top navigation buttons
+            document.getElementById('trendDropdown').addEventListener('click', () => {
+                console.log('Trend Wave dropdown clicked');
+            });
+
+            document.getElementById('saveChart').addEventListener('click', () => {
+                console.log('Save Chart clicked');
+            });
+
+            document.getElementById('loadChart').addEventListener('click', () => {
+                console.log('Load Chart clicked');
+            });
+
+            document.getElementById('assetsBtn').addEventListener('click', () => {
+                console.log('Assets button clicked');
+            });
+
+            document.getElementById('alertNotifications').addEventListener('click', () => {
+                console.log('Alert Notifications clicked');
+            });
+
+            // Timeframe buttons
+            document.querySelectorAll('.timeframe-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.timeframe-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    this.currentTimeframe = e.target.textContent;
+                    console.log('Timeframe changed to:', this.currentTimeframe);
+                });
+            });
+
+            // Chart controls
+            document.querySelectorAll('.control-icon').forEach(icon => {
+                icon.addEventListener('click', () => {
+                    console.log('Chart control clicked');
+                });
+            });
+
+            document.querySelector('.indicators-btn').addEventListener('click', () => {
+                console.log('Indicators button clicked');
+            });
+
+            // Category buttons
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const category = e.target.dataset.category;
+                    if (category) {
+                        this.setActiveCategory(category);
+                    }
+                });
+            });
+
+            // Tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    const tabName = e.target.dataset.tab;
+                    if (tabName) {
+                        this.setActiveTab(tabName);
+                    }
+                });
+            });
+
+            // Search input
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                this.searchQuery = e.target.value.toLowerCase();
+                this.renderAssets();
+            });
+        }
+
+        setActiveCategory(category) {
+            this.currentCategory = category;
+
+            // Update active button
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.category === category) {
+                    btn.classList.add('active');
+                }
+            });
+
+            this.renderAssets();
+        }
+
+        setActiveTab(tab) {
+            this.currentTab = tab;
+
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(tabBtn => {
+                tabBtn.classList.remove('active');
+                if (tabBtn.dataset.tab === tab) {
+                    tabBtn.classList.add('active');
+                }
+            });
+
+            this.renderAssets();
+        }
+
+        toggleFavorite(assetId) {
+            if (this.favorites.has(assetId)) {
+                this.favorites.delete(assetId);
+            } else {
+                this.favorites.add(assetId);
+            }
+            this.renderAssets();
+        }
+
+        getFilteredAssets() {
+            let assets = this.assets[this.currentCategory] || [];
+
+            // Filter by search query
+            if (this.searchQuery) {
+                assets = assets.filter(asset =>
+                    asset.name.toLowerCase().includes(this.searchQuery) ||
+                    asset.symbol.toLowerCase().includes(this.searchQuery)
+                );
+            }
+
+            // Filter by favorites if on favorites tab
+            if (this.currentTab === 'favorites') {
+                assets = assets.filter(asset => this.favorites.has(asset.id));
+            }
+
+            return assets;
+        }
+
+        formatPrice(price) {
+            if (price >= 1000) {
+                return price.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            } else {
+                return price.toFixed(2);
+            }
+        }
+
+        formatChange(change) {
+            const sign = change >= 0 ? '+' : '';
+            return `${sign}${change.toFixed(2)}%`;
+        }
+
+        getAssetIconContent(iconType) {
+            const iconMap = {
+                btc: '₿',
+                eth: 'Ξ',
+                xrp: 'X',
+                usdt: '₮',
+                bnb: 'B',
+                sol: 'S',
+                doge: 'Ð',
+                usdc: '$',
+                ada: '₳',
+                eur: '€',
+                gbp: '£',
+                jpy: '¥',
+                aud: 'A',
+                gold: 'Au',
+                silver: 'Ag',
+                oil: '🛢️',
+                gas: '⛽',
+                sp500: 'S',
+                nasdaq: 'N',
+                dow: 'D',
+                dax: 'X'
+            };
+            return iconMap[iconType] || iconType.charAt(0).toUpperCase();
+        }
+
+        renderAssets() {
+            const assetsList = document.getElementById('assetsList');
+            const assets = this.getFilteredAssets();
+
+            if (assets.length === 0) {
+                assetsList.innerHTML = `
+                        <div class="no-assets">
+                            ${this.currentTab === 'favorites' ? 'No favorites yet' : 'No assets found'}
+                        </div>
+                    `;
+                return;
+            }
+
+            assetsList.innerHTML = assets.map(asset => `
+                    <div class="asset-item">
+                        <div class="asset-icon ${asset.icon}">
+                            ${this.getAssetIconContent(asset.icon)}
+                        </div>
+                        <div class="asset-info">
+                            <div class="asset-name">${asset.name}</div>
+                            <div class="asset-symbol">${asset.symbol}</div>
+                        </div>
+
+                        <div class="asset-change ${asset.change >= 0 ? 'positive' : 'negative'}">
+                            ${this.formatChange(asset.change)}
+                        </div>
+                        <button class="favorite-btn" onclick="dashboard.toggleFavorite('${asset.id}')">
+                        <i class="fa-solid fa-star" style="color: white"></i>
+
+                        </button>
+                    </div>
+                `).join('');
+        }
+    }
+
+    // Initialize the dashboard
+    const dashboard = new MarketDashboard();
+</script>
+</body>
+</html>
